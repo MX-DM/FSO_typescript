@@ -8,7 +8,7 @@ const parseArguments = (args: string[]): ExerciseValues => {
     if (args.length < 4) throw new Error('Not enough arguments');
   
     const target = Number(args[2]);
-    const exercices = JSON.parse(args[3]);
+    const exercices = JSON.parse(args[3]) as number[];
     
     if(isNaN(target)) {throw new Error('The target isn\'t a number!');}
     if(target <= 0) {throw new Error('The target must be a positive number!');}
@@ -29,7 +29,7 @@ interface Result {
     ratingDescription: string;
 }
 
-const calculateExercises = (exercices: number[], target: number): Result => {
+export const calculateExercises = (exercices: number[], target: number): Result => {
     const netDays = exercices.length;
     const trainingDays = (exercices.filter(e => e > 0)).length;
     const average = exercices.reduce((sum, num) => sum + num, 0) / exercices.length;
@@ -55,18 +55,20 @@ const calculateExercises = (exercices: number[], target: number): Result => {
         reached,
         rating,
         ratingDescription
-    }
-}
+    };
+};
 
-try {
-    const { target, exercices } = parseArguments(process.argv)
-    console.log(calculateExercises(exercices, target))
-} catch (error: unknown) {
-    let errorMessage = 'Something bad happened.'
-    if (error instanceof Error) {
-        errorMessage += ' Error: ' + error.message;
+if (require.main === module) {
+    try {
+        const { target, exercices } = parseArguments(process.argv);
+        console.log(calculateExercises(exercices, target));
+    } catch (error: unknown) {
+        let errorMessage = 'Something bad happened.';
+        if (error instanceof Error) {
+            errorMessage += ' Error: ' + error.message;
+        }
+        console.log(errorMessage);
     }
-    console.log(errorMessage);
 }
 
 export {};
