@@ -1,4 +1,5 @@
 import { Gender, NewPatient } from './types';
+import z from 'zod';
 
 const toNewPatient = (object: unknown): NewPatient => {
     if ( !object || typeof object !== 'object' ) {
@@ -67,6 +68,16 @@ const isString = (text: unknown): text is string => {
 const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
+
+// ZOD
+
+export const NewPatientSchema = z.object({
+  name: z.string(),
+  gender: z.enum(Gender),
+  dateOfBirth: z.iso.date(),
+  occupation: z.string(),
+  ssn: z.string()
+});
 
 
 export default toNewPatient;
