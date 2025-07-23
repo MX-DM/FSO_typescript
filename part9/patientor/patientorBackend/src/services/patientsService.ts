@@ -1,15 +1,15 @@
 import rawPatients from '../data/patients';
 import { Patient, NonSensitivePatient, NewPatient } from '../types';
 import { v4 as uuid } from 'uuid';
-import toNewPatient from '../utils';
+import { FullPatientSchema } from "../schemas";
 
 const patientsData: Patient [] = rawPatients.map(obj => {
-  const object = toNewPatient(obj) as Patient;
-  object.id = obj.id;
+  const object = FullPatientSchema.parse(obj);
   return object;
 });
 
 const getPatients = () : Patient[] => {
+    console.log(rawPatients);
     return patientsData;
 };
 

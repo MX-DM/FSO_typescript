@@ -1,12 +1,12 @@
 import express from 'express';
 import patientsService from '../services/patientsService';
-import { NewPatientSchema } from '../utils';
+import { NewPatientSchema } from '../schemas';
 import z from 'zod';
 
 const router = express.Router();
 
 router.get('/', (_req, res) => {
-    const patients = patientsService.getNonSensitivePatients();
+    const patients = patientsService.getPatients();
     res.status(200).json(patients);
 });
 
