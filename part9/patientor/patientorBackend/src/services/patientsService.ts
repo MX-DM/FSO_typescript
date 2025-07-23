@@ -32,7 +32,8 @@ const findById = (id: string): Patient | undefined => {
 const addPatient = (patientEntry : NewPatient): Patient => {
   const newPatient : Patient = {
     id: uuid(),
-    ...patientEntry
+    ...patientEntry,
+    entries: []
   };
 
   patientsData.push(newPatient);
