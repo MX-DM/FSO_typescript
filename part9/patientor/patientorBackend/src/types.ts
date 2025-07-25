@@ -7,16 +7,6 @@ export interface Diagnosis {
   latin?: string;
 }
 
-export type Discharge = {
-  date: string;
-  criteria: string;
-};
-
-export type SickLeave = {
-  startDate: string;
-  endDate: string;
-};
-
 export enum HealthCheckRating {
   Healthy = 0,
   LowRisk = 1,
