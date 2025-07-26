@@ -1,5 +1,5 @@
 import rawPatients from '../data/patients';
-import { Patient, NonSensitivePatient, NewPatient } from '../types';
+import { Patient, NonSensitivePatient, NewPatient, NewEntry, Entry } from '../types';
 import { v4 as uuid } from 'uuid';
 import { FullPatientSchema } from "../schemas";
 
@@ -40,9 +40,32 @@ const addPatient = (patientEntry : NewPatient): Patient => {
   return newPatient;
 };
 
+const addEntry = (newEntry : NewEntry, id : string): Entry => {
+  const patient = patientsData.find(p => p.id === id);
+  const addedEntry : Entry= {
+    id: uuid(),
+    ...newEntry
+  };
+
+  if(patient){
+    patient.entries = patient.entries.concat(addedEntry);
+  }
+  
+  
+  patientsData.map(p => {
+    if (p.id === id) {
+      return patient;
+    }
+    return p;
+  });
+
+  return addedEntry;
+};
+
 export default {
   getNonSensitivePatients,
   getPatients,
   findById,
-  addPatient
+  addPatient,
+  addEntry
 };

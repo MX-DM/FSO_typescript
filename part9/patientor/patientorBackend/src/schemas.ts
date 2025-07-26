@@ -1,23 +1,14 @@
 import { z } from 'zod';
 import { Gender, HealthCheckRating } from './types';
 
-export const NewPatientSchema = z.object({
-  name: z.string(),
-  gender: z.enum(Gender),
-  dateOfBirth: z.string(),
-  occupation: z.string(),
-  ssn: z.string()
-});
 
 const BaseEntrySchema = z.object({
   id: z.string(),
-  date: z.string(),
-  description: z.string(),
-  specialist: z.string(),
+  date: z.string().min(1, { message: 'Date is required' }),
+  description: z.string().min(1, { message: 'Description is required' }),
+  specialist: z.string().min(1, { message: 'Specialist is required' }),
   diagnosisCodes: z.array(z.string()).optional()
 });
-
-const BaseNewEntrySchema = BaseEntrySchema.omit({ id: true });
 
 // FULL entry types (with id)
 const HealthCheckEntrySchema = BaseEntrySchema.extend({
@@ -27,13 +18,13 @@ const HealthCheckEntrySchema = BaseEntrySchema.extend({
 const HospitalEntrySchema = BaseEntrySchema.extend({
   type: z.literal("Hospital"),
   discharge: z.object({
-    date: z.string(),
-    criteria: z.string()
+    date: z.string().min(1, { message: 'Date of discharge is required' }),
+    criteria: z.string().min(1, { message: 'Criteria is required' })
   })
 });
 const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
   type: z.literal("OccupationalHealthcare"),
-  employerName: z.string(),
+  employerName: z.string().min(1, { message: 'Employer name is required' }),
   sickLeave: z.object({
     startDate: z.string(),
     endDate: z.string()
@@ -41,25 +32,11 @@ const OccupationalHealthcareEntrySchema = BaseEntrySchema.extend({
 });
 
 // NEW entry types (no id)
-const NewHealthCheckEntrySchema = BaseNewEntrySchema.extend({
-  type: z.literal("HealthCheck"),
-  healthCheckRating: z.enum(HealthCheckRating)
-});
-const NewHospitalEntrySchema = BaseNewEntrySchema.extend({
-  type: z.literal("Hospital"),
-  discharge: z.object({
-    date: z.string(),
-    criteria: z.string()
-  })
-});
-const NewOccupationalHealthcareEntrySchema = BaseNewEntrySchema.extend({
-  type: z.literal("OccupationalHealthcare"),
-  employerName: z.string(),
-  sickLeave: z.object({
-    startDate: z.string(),
-    endDate: z.string()
-  }).optional()
-});
+const NewHealthCheckEntrySchema = HealthCheckEntrySchema.omit({ id: true });
+
+const NewHospitalEntrySchema = HospitalEntrySchema.omit({ id: true });
+
+const NewOccupationalHealthcareEntrySchema = OccupationalHealthcareEntrySchema.omit({ id: true });
 
 // Discriminated unions
 export const EntrySchema = z.discriminatedUnion("type", [
@@ -76,10 +53,12 @@ export const NewEntrySchema = z.discriminatedUnion("type", [
 
 export const FullPatientSchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().min(1, { message: 'Name is required' }),
   gender: z.enum(Gender),
-  dateOfBirth: z.string(),
-  occupation: z.string(),
-  ssn: z.string(),
+  dateOfBirth: z.string().min(1, { message: 'Date of birth is required' }),
+  occupation: z.string().min(1, { message: 'Occupation is required' }),
+  ssn: z.string().min(1, { message: 'SSN is required' }),
   entries: z.array(EntrySchema)
 });
+
+export const NewPatientSchema = FullPatientSchema.omit({ id: true, entries: true });
