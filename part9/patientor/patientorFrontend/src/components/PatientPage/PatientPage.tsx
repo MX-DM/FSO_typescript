@@ -1,10 +1,11 @@
+// PatientPage.tsx
 import { useParams } from "react-router-dom";
 import patientsService from "../../services/patients";
 import diagnosesService from "../../services/diagnoses";
 import { useEffect, useState } from "react";
 import { Diagnosis, NewEntry, Patient } from "../../types";
 import Entries from "./Entries";
-import { Card, Container, Spinner } from "react-bootstrap";
+import { Card, Container, Spinner, Row, Col } from "react-bootstrap";
 import EntryForm from "./EntryForm";
 import Notification from "../Notification";
 import axios from "axios";
@@ -59,7 +60,7 @@ const PatientPage = () => {
         entries: patient.entries.concat(addedEntry)
       };
       setPatient(newPatient);
-      showNotification('Entry succesfully added!', 'success');
+      showNotification('Entry successfully added!', 'success');
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
         const data = error.response.data;
@@ -73,31 +74,43 @@ const PatientPage = () => {
           showNotification('Validation failed with unknown format', 'error');
         }
       }
-  }};
+    }
+  };
 
   return (
-    <Container fluid className="mt-4 ms-4 me-4">
+    <Container fluid className="mt-4">
       {notification && (
         <Notification message={notification.message} type={notification.type} />
       )}
+
       {patient && diagnoses ? (
-        <Card className="w-100">
+        <Card className="shadow-lg border-0 rounded-4 p-3 bg-light-subtle">
           <Card.Body>
-            <Card.Title as="h2">{patient.name}</Card.Title>
-            <Card.Text><strong>SSN:</strong> {patient.ssn}</Card.Text>
-            <Card.Text><strong>Occupation:</strong> {patient.occupation}</Card.Text>
-            <Card.Text><strong>Date of Birth:</strong> {patient.dateOfBirth}</Card.Text>
-          </Card.Body>
-          <EntryForm onSubmit={addEntry} diagnoses={diagnoses}/>
-          <Card.Footer>
-            <h5>Entries</h5>
+            <Card.Title as="h2" className="text-primary mb-4">
+              {patient.name}
+            </Card.Title>
+            <Row className="mb-3">
+              <Col md={6}><strong>SSN:</strong> {patient.ssn}</Col>
+              <Col md={6}><strong>Occupation:</strong> {patient.occupation}</Col>
+              <Col md={6}><strong>DOB:</strong> {patient.dateOfBirth}</Col>
+              <Col md={6}><strong>Gender:</strong> {patient.gender}</Col>
+            </Row>
+
+            <hr />
+
+            <h4 className="text-secondary mb-3">Add New Entry</h4>
+            <EntryForm onSubmit={addEntry} diagnoses={diagnoses} />
+
+            <hr />
+
+            <h4 className="text-secondary mt-4 mb-3">Entries</h4>
             <Entries entries={patient.entries} diagnoses={diagnoses} />
-          </Card.Footer>
+          </Card.Body>
         </Card>
       ) : (
-        <div className="text-center">
-          <Spinner animation="border" role="status" />
-          <div>Loading patient's data...</div>
+        <div className="text-center mt-5">
+          <Spinner animation="border" role="status" variant="primary" />
+          <div className="mt-2">Loading patient's data...</div>
         </div>
       )}
     </Container>
